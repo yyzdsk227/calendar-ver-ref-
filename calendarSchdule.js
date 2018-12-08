@@ -3,6 +3,38 @@ var locationMonth = 0; // 현재 달력위치
 var locationYear = 0; // 현재 년도위치
 var locationWeek = 0; // 현재 주차위치
 
+// ajax로 이벤트 데이터를 받는다
+function calendarEventList() {
+	$.ajax({
+		url: './calendarEventList.do',
+		type: 'post',
+		data: {
+			"calendarId" : $("#calendarId").val()
+		},
+		async: false,
+		success: function(lists) {
+			if(lists.length != 0) {
+				data.chk = true;
+				data.cnt = lists.length;
+				data.title = new Array();
+				data.description = new Array();
+				data.start = new Array();
+				data.end = new Array();
+				data.eventId = new Array();
+				$.each(lists, function(i, item){
+					data.title[i] = item.summary;
+					data.description[i] = item.description;
+					data.start[i] = new Date(item.start.dateTime.value);
+					data.end[i] = new Date(item.end.dateTime.value);
+					data.eventId[i] = item.id;
+				});
+			}else {
+				data.chk = false;
+			}
+		}
+	});
+}
+
 // 날짜 테그를 만들어준다
 function dayTagFormat(year, month, day) {
 	var tag = new StringBuffer();
@@ -256,37 +288,7 @@ function removeEventOne(eventId) {
 		screenWriteMonth();
 	}
 }
-// ajax로 이벤트 데이터를 받는다
-function calendarEventList() {
-	$.ajax({
-		url: './calendarEventList.do',
-		type: 'post',
-		data: {
-			"calendarId" : $("#calendarId").val()
-		},
-		async: false,
-		success: function(lists) {
-			if(lists.length != 0) {
-				data.chk = true;
-				data.cnt = lists.length;
-				data.title = new Array();
-				data.description = new Array();
-				data.start = new Array();
-				data.end = new Array();
-				data.eventId = new Array();
-				$.each(lists, function(i, item){
-					data.title[i] = item.summary;
-					data.description[i] = item.description;
-					data.start[i] = new Date(item.start.dateTime.value);
-					data.end[i] = new Date(item.end.dateTime.value);
-					data.eventId[i] = item.id;
-				});
-			}else {
-				data.chk = false;
-			}
-		}
-	});
-}
+
 // 주단위로 화면에 그린다
 function screenWriteWeek() {
 	var date = new Date();
